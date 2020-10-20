@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">AgendaSQLite</string>
+    <string name="titulo">SQLite - Exemplo</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="Add_New">Novo</string>
+    <string name="edit">Editar</string>
+    <string name="delete">Excluir</string>
+    <string name="title_activity_display_contact">Exibir</string>
+    <string name="name">Nome</string>
+    <string name="phone">Telefone</string>
+    <string name="email">Email</string>
+    <string name="street">Endereço</string>
+    <string name="country">Cidade/Estado/CEP</string>
+    <string name="save">Salvar</string>
+    <string name="delete_ok">Exclusão efetuada com successo"</string>
+    <string name="deleteContact">Confirma a exclusão?</string>
+    <string name="deleteAll">Confirma a exclusão de todos os registros?</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="clear_all">Excluir Tudo</string>
+    <string name="no_data">Nenhum registro cadastrado</string>
+    <string name="image_description">logo Android</string>
+    <string name="preferencia_armazenamento">Preferência Armazenamento</string>
+    <string name="efetuar_backup">Efetuar Backup</string>
+    <string name="excluir_backup">Excluir Backup</string>
+    <string name="armazenamento_externo">Armazenamento Externo</string>
+    <string name="backup">Backup</string>
+    <string name="local_armazenamento">Selecione o local de Preferência de armazenamento</string>
+</resources>
