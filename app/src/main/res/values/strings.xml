@@ -27,4 +27,6 @@
     <string name="armazenamento_externo">Armazenamento Externo</string>
     <string name="backup">Backup</string>
     <string name="local_armazenamento">Selecione o local de Preferência de armazenamento</string>
+    <string name="perm_denied">Permissão negada</string>
+    <string name = "no_record_acces">Sem acesso de Gravação</string>
 </resources>

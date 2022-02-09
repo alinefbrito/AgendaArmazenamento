@@ -15,16 +15,6 @@ public class Contato implements Serializable {
     private String _cidade;
 
     public Contato(){   }
-    public Contato(int id, String nome, String num_tel){
-        this.set_id(id);
-        this.set_nome(nome);
-        this.set_num_tel(num_tel);
-    }
-
-    public Contato(String nome, String num_tel){
-        this.set_nome(nome);
-        this.set_num_tel(num_tel);
-    }
 
     public Contato(String _nome, String _num_tel, String _email, String _logradouro, String _cidade) {
         this._nome = _nome;
