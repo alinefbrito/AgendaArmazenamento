@@ -8,7 +8,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     public void atualizaLista() {
 
       if ( mydb.numberOfRows() >0){
-        ArrayList<String> array_list = mydb.getAllContacts();
+        ArrayList<Contato> array_list = mydb.getContactsList();
 
         if (array_list.isEmpty()) {
             text_empty.setVisibility(View.VISIBLE);
@@ -104,8 +103,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             text_empty.setVisibility(View.GONE);
 
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, array_list);
-
+            ContatoArrayAdapter arrayAdapter = new ContatoArrayAdapter(this, array_list);
 
             obj.setAdapter(arrayAdapter);
             obj.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {

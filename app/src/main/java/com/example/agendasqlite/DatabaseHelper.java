@@ -22,6 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public DatabaseHelper(Context context) {
+
         super(context, DATABASE_NAME , null, 1);
     }
 
@@ -30,11 +31,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // TODO Auto-generated method stub
         db.execSQL(
                 "create table " + CONTACTS_TABLE_NAME +
-                        "(id integer primary key,"+
-                        CONTACTS_TABLE_NAME +" text , " +
-                        CONTACTS_COLUMN_PHONE + "text ," +
-                        CONTACTS_COLUMN_EMAIL + "text, " +
-                        CONTACTS_COLUMN_STREET + "text, " +
+                        "(CONTACTS_COLUMN_ID integer primary key autoincrement,"+
+                        DatabaseHelper.CONTACTS_COLUMN_NAME +" text , " +
+                        CONTACTS_COLUMN_PHONE + " text ," +
+                        CONTACTS_COLUMN_EMAIL + " text, " +
+                        CONTACTS_COLUMN_STREET + " text, " +
                         CONTACTS_COLUMN_CITY + " text)"
         );
     }
@@ -54,8 +55,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(CONTACTS_COLUMN_EMAIL, c.get_email());
         contentValues.put(CONTACTS_COLUMN_STREET, c.get_logradouro());
         contentValues.put(CONTACTS_COLUMN_CITY, c.get_cidade());
-        db.insert(CONTACTS_TABLE_NAME, null, contentValues);
-        return true;
+        if (
+                db.insert(CONTACTS_TABLE_NAME, null, contentValues) > 0)
+            return true;
+        else
+            return false;
     }
 
     public Cursor getData(int id) {

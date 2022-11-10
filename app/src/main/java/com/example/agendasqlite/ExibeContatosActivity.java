@@ -1,10 +1,7 @@
 package com.example.agendasqlite;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -15,8 +12,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 public class ExibeContatosActivity extends AppCompatActivity {
-    int from_Where_I_Am_Coming = 0;
     private DatabaseHelper mydb ;
 
     TextView name ;
@@ -27,6 +25,7 @@ public class ExibeContatosActivity extends AppCompatActivity {
     Contato contato;
     int id_To_Update = 0;
 
+    @SuppressLint("Range")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,19 +130,15 @@ contato = new Contato();
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(R.string.deleteContact)
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                mydb.deleteContact(id_To_Update);
-                                Toast.makeText(getApplicationContext(), R.string.delete_ok,
-                                        Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                                startActivity(intent);
-                            }
+                        .setPositiveButton(R.string.yes, (dialog, id) -> {
+                            mydb.deleteContact(id_To_Update);
+                            Toast.makeText(getApplicationContext(), R.string.delete_ok,
+                                    Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                            startActivity(intent);
                         })
-                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
-                            }
+                        .setNegativeButton(R.string.no, (dialog, id) -> {
+                            // User cancelled the dialog
                         });
 
                 AlertDialog d = builder.create();

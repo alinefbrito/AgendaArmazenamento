@@ -55,7 +55,7 @@ public class BackupActivity extends AppCompatActivity {
     private void recuperar()
     {
 
-        SharedPreferences settings = getSharedPreferences(PREFERENCIAS_NAME , 0);
+        SharedPreferences settings = getSharedPreferences(PREFERENCIAS_NAME ,MODE_PRIVATE);
         usesExternalStorage = settings.getBoolean(PREFERENCIAS_VALOR, false);
         switcher.setChecked(usesExternalStorage);
     }
