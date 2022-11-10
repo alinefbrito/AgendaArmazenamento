@@ -31,7 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // TODO Auto-generated method stub
         db.execSQL(
                 "create table " + CONTACTS_TABLE_NAME +
-                        "(CONTACTS_COLUMN_ID integer primary key autoincrement,"+
+                        "( " +CONTACTS_COLUMN_ID + " integer primary key autoincrement,"+
                         DatabaseHelper.CONTACTS_COLUMN_NAME +" text , " +
                         CONTACTS_COLUMN_PHONE + " text ," +
                         CONTACTS_COLUMN_EMAIL + " text, " +
@@ -100,11 +100,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     @SuppressLint("Range")
-    public ArrayList<String> getAllContacts() {
+    public ArrayList<String> getAllNames() {
         ArrayList<String> array_list = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from contacts", null );
+        Cursor res =  db.rawQuery( "select " + CONTACTS_TABLE_NAME+ " from " + CONTACTS_TABLE_NAME, null );
         res.moveToFirst();
 
         while(!res.isAfterLast()){
@@ -119,7 +119,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      ArrayList<Contato> lista = new ArrayList<>() ;
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from contacts", null );
+        Cursor res =  db.rawQuery( "select * from " + CONTACTS_TABLE_NAME, null );
         res.moveToFirst();
 
         while(!res.isAfterLast()){
