@@ -7,20 +7,12 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "MyDBName.db";
     public static final String CONTACTS_TABLE_NAME = "contacts";
-    public static final String CONTACTS_COLUMN_ID = "id";
+    public static final String CONTACTS_COLUMN_ID = "_id";
     public static final String CONTACTS_COLUMN_NAME = "name";
     public static final String CONTACTS_COLUMN_EMAIL = "email";
     public static final String CONTACTS_COLUMN_STREET = "street";
@@ -36,15 +28,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // TODO Auto-generated method stub
         db.execSQL(
-                "create table contacts " +
-                        "(id integer primary key, name text,phone text,email text, street text,place text)"
+                "create table " + CONTACTS_TABLE_NAME +
+                        " (" + CONTACTS_COLUMN_ID + " integer primary key autoincrement," +
+                        CONTACTS_COLUMN_NAME + " text," +
+                        CONTACTS_COLUMN_PHONE + " text," +
+                        CONTACTS_COLUMN_EMAIL + " text," +
+                        CONTACTS_COLUMN_NAME + " text," +
+                        CONTACTS_COLUMN_CITY + " text)"
         );
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // TODO Auto-generated method stub
-        db.execSQL("DROP TABLE IF EXISTS contacts");
+        db.execSQL("DROP TABLE IF EXISTS "+ CONTACTS_TABLE_NAME);
         onCreate(db);
     }
 
@@ -80,8 +77,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(CONTACTS_COLUMN_EMAIL, c.get_email());
         contentValues.put(CONTACTS_COLUMN_STREET, c.get_logradouro());
         contentValues.put(CONTACTS_COLUMN_CITY, c.get_cidade());
-        db.update(CONTACTS_TABLE_NAME, contentValues, "id = ? ", new String[] { Integer.toString(c.get_id()) } );
-        return true;
+        if (
+                db.update(CONTACTS_TABLE_NAME, contentValues, "id = ? ", new String[]{Integer.toString(c.get_id())}) > 0)
+            return true;
+        else
+            return false;
     }
 
     public Integer deleteContact (Integer id) {
@@ -112,13 +112,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return array_list;
     }
     public ArrayList<Contato> getContactsList() {
-     ArrayList<Contato> lista = new ArrayList<Contato>() ;
+        ArrayList<Contato> lista = new ArrayList<Contato>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from contacts", null );
+        Cursor res = db.rawQuery("select * from contacts", null);
         res.moveToFirst();
 
-        while(res.isAfterLast() == false){
+        while (res.isAfterLast() == false) {
             Contato c = new Contato();
             c.set_nome(res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME)));
             c.set_id(Integer.parseInt(res.getString(res.getColumnIndex(CONTACTS_COLUMN_ID))));
