@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -40,7 +39,8 @@ public class ContatoArrayAdapter extends ArrayAdapter<Contato> {
 
         // then according to the position of the view assign the desired TextView 1 for the same
         TextView textView1 = currentItemView.findViewById(R.id.textView1);
-        textView1.setText(currentNumberPosition.get_id());
+        String str1 = String.valueOf(currentNumberPosition.get_id());
+        textView1.setText(str1);
 
         // then according to the position of the view assign the desired TextView 2 for the same
         TextView textView2 = currentItemView.findViewById(R.id.textView2);

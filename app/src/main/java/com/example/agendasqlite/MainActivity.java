@@ -8,6 +8,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseHelper mydb;
     private TextView text_empty;
     private ListView obj;
+    public static final String EXTRA_VALUE ="com.example.agendasqlite.EXTRA_VALUE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,18 +108,15 @@ public class MainActivity extends AppCompatActivity {
             ContatoArrayAdapter arrayAdapter = new ContatoArrayAdapter(this, array_list);
 
             obj.setAdapter(arrayAdapter);
-            obj.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {
-                // TODO Auto-generated method stub
-                int id_To_Search = arg2 + 1;
-
-                Bundle dataBundle = new Bundle();
-                dataBundle.putInt("id", id_To_Search);
-
+            obj.setOnItemClickListener((parent, view, position, id) -> {
+                Contato c = (Contato) parent.getItemAtPosition(position);
                 Intent intent = new Intent(getApplicationContext(), ExibeContatosActivity.class);
-
-                intent.putExtras(dataBundle);
+                intent.putExtra(EXTRA_VALUE,c);
                 startActivity(intent);
             });
+        }
+
+
             obj.setVisibility(View.VISIBLE);
-        }}}
+        }}
     }

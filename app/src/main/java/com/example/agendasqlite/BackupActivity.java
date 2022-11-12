@@ -76,6 +76,7 @@ public void BackupInterno()
         oos.writeObject(c);
         oos.close();
         fos.close();
+        Toast.makeText(this, file.getAbsolutePath(),Toast.LENGTH_SHORT).show();
     } catch (IOException e) {
         e.printStackTrace();
         Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
