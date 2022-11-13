@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdk 29
 
     defaultConfig {
         applicationId "com.example.agendasqlite"
-        minSdkVersion 26
-        targetSdkVersion 29
+        minSdk 26
+        targetSdk 29
         versionCode 1
         versionName "1.0"
 
@@ -20,6 +20,9 @@ android {
         }
     }
     namespace 'com.example.agendasqlite'
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_11
+    }
 }
 
 dependencies {
