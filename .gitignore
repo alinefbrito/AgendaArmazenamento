@@ -12,5 +12,4 @@
 /captures
 .externalNativeBuild
 .cxx
-*.zip
-*.zip
+.idea/workspace-DESKTOP-G36PSAF.xml
