@@ -1,7 +1,7 @@
 package com.example.agendasqlite;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -9,20 +9,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    public final static String EXTRA_MESSAGE = "MESSAGE";
     DatabaseHelper mydb;
     private TextView text_empty;
     private ListView obj;
-    public static final String EXTRA_VALUE ="com.example.agendasqlite.EXTRA_VALUE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +42,8 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @SuppressLint("NonConstantResourceId")
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
 
         switch (item.getItemId()) {
@@ -60,15 +59,19 @@ public class MainActivity extends AppCompatActivity {
             case R.id.item2:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(R.string.deleteAll)
-                        .setPositiveButton(R.string.yes, (dialog, id) -> {
-                            mydb.deleteAll();
-                            Toast.makeText(getApplicationContext(), R.string.delete_ok,
-                                    Toast.LENGTH_SHORT).show();
-                            Intent intent1 = new Intent(getApplicationContext(), MainActivity.class);
-                            startActivity(intent1);
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                mydb.deleteAll();
+                                Toast.makeText(getApplicationContext(), R.string.delete_ok,
+                                        Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(intent);
+                            }
                         })
-                        .setNegativeButton(R.string.no, (dialog, id) -> {
-                            // Não faz nada
+                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                            }
                         });
 
                 AlertDialog d = builder.create();
@@ -95,8 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void atualizaLista() {
 
-      if ( mydb.numberOfRows() >0){
-        ArrayList<Contato> array_list = mydb.getContactsList();
+        ArrayList array_list = mydb.getAllContacts();
 
         if (array_list.isEmpty()) {
             text_empty.setVisibility(View.VISIBLE);
@@ -105,18 +107,26 @@ public class MainActivity extends AppCompatActivity {
         } else {
             text_empty.setVisibility(View.GONE);
 
-            ContatoArrayAdapter arrayAdapter = new ContatoArrayAdapter(this, array_list);
+            ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, array_list);
+
 
             obj.setAdapter(arrayAdapter);
-            obj.setOnItemClickListener((parent, view, position, id) -> {
-                Contato c = (Contato) parent.getItemAtPosition(position);
-                Intent intent = new Intent(getApplicationContext(), ExibeContatosActivity.class);
-                intent.putExtra(EXTRA_VALUE,c);
-                startActivity(intent);
+            obj.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                    // TODO Auto-generated method stub
+                    int id_To_Search = arg2 + 1;
+
+                    Bundle dataBundle = new Bundle();
+                    dataBundle.putInt("id", id_To_Search);
+
+                    Intent intent = new Intent(getApplicationContext(), ExibeContatosActivity.class);
+
+                    intent.putExtras(dataBundle);
+                    startActivity(intent);
+                }
             });
-        }
-
-
             obj.setVisibility(View.VISIBLE);
-        }}
+        }
     }
+}

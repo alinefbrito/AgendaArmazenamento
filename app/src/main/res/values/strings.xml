@@ -7,12 +7,11 @@
     <string name="edit">Editar</string>
     <string name="delete">Excluir</string>
     <string name="title_activity_display_contact">Exibir</string>
-   <string name="id">ID</string>
     <string name="name">Nome</string>
     <string name="phone">Telefone</string>
     <string name="email">Email</string>
     <string name="street">Endereço</string>
-    <string name="city">Cidade</string>
+    <string name="country">Cidade/Estado/CEP</string>
     <string name="save">Salvar</string>
     <string name="delete_ok">Exclusão efetuada com successo"</string>
     <string name="deleteContact">Confirma a exclusão?</string>
@@ -28,7 +27,4 @@
     <string name="armazenamento_externo">Armazenamento Externo</string>
     <string name="backup">Backup</string>
     <string name="local_armazenamento">Selecione o local de Preferência de armazenamento</string>
-    <string name="perm_denied">Permissão negada</string>
-    <string name = "no_record_acces">Sem acesso de Gravação</string>
-    <string name="description">Icone contato</string>
 </resources>

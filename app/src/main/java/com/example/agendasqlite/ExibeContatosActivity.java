@@ -1,8 +1,12 @@
 package com.example.agendasqlite;
 
-import android.annotation.SuppressLint;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,90 +15,96 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import javax.xml.validation.Validator;
-
 public class ExibeContatosActivity extends AppCompatActivity {
-    private DatabaseHelper mydb;
+    int from_Where_I_Am_Coming = 0;
+    private DatabaseHelper mydb ;
 
-    TextView name;
+    TextView name ;
     TextView phone;
     TextView email;
     TextView street;
     TextView place;
-    TextView id;
-    Button btn;
     Contato contato;
+    int id_To_Update = 0;
 
-
-    @SuppressLint("Range")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exibe_contatos);
-        id = findViewById(R.id.editTextID);
-        id.setEnabled(false);
         name = findViewById(R.id.editTextName);
         phone = findViewById(R.id.editTextPhone);
         email = findViewById(R.id.editTextStreet);
         street = findViewById(R.id.editTextEmail);
         place = findViewById(R.id.editTextCity);
-        btn = findViewById(R.id.btnSalvar);
+
         mydb = new DatabaseHelper(this);
-        btn.setOnClickListener(view -> salvar());
-        contato = (Contato) getIntent().getSerializableExtra(MainActivity.EXTRA_VALUE);
-        if (contato != null) {
 
+        Bundle extras = getIntent().getExtras();
+        if(extras !=null) {
+            int Value = extras.getInt("id");
 
-            btn.setVisibility(View.INVISIBLE);
-            id.setText(String.valueOf(contato.get_id()));
-            id.setFocusable(false);
-            id.setClickable(false);
+            if(Value>0){
+                //means this is the view part not the add contact part.
+                Cursor rs = mydb.getData(Value);
+                id_To_Update = Value;
+                rs.moveToFirst();
+contato = new Contato();
+                contato.set_nome(rs.getString(rs.getColumnIndex(DatabaseHelper.CONTACTS_COLUMN_NAME)));
+                contato.set_num_tel(rs.getString(rs.getColumnIndex(DatabaseHelper.CONTACTS_COLUMN_PHONE)));
+                contato.set_email(rs.getString(rs.getColumnIndex(DatabaseHelper.CONTACTS_COLUMN_EMAIL)));
+                contato.set_logradouro(rs.getString(rs.getColumnIndex(DatabaseHelper.CONTACTS_COLUMN_STREET)));
+               contato.set_cidade(rs.getString(rs.getColumnIndex(DatabaseHelper.CONTACTS_COLUMN_CITY)));
 
-            name.setText(contato.get_nome());
-            name.setFocusable(true);
-            name.setClickable(false);
+                if (!rs.isClosed())  {
+                    rs.close();
+                }
+                Button b = findViewById(R.id.button1);
+                b.setVisibility(View.INVISIBLE);
 
-            phone.setText(contato.get_num_tel());
-            phone.setFocusable(false);
-            phone.setClickable(false);
+                name.setText(contato.get_nome());
+                name.setFocusable(true);
+                name.setClickable(false);
 
-            email.setText(contato.get_email());
-            email.setFocusable(false);
-            email.setClickable(false);
+                phone.setText(contato.get_num_tel());
+                phone.setFocusable(false);
+                phone.setClickable(false);
 
-            street.setText(contato.get_logradouro());
-            street.setFocusable(false);
-            street.setClickable(false);
+                email.setText(contato.get_email());
+                email.setFocusable(false);
+                email.setClickable(false);
 
-            place.setText(contato.get_cidade());
-            place.setFocusable(false);
-            place.setClickable(false);
-        } else
-            contato = new Contato();
+                street.setText(contato.get_logradouro());
+                street.setFocusable(false);
+                street.setClickable(false);
+
+                place.setText(contato.get_cidade());
+                place.setFocusable(false);
+                place.setClickable(false);
+            }
+        }
     }
-    //}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         Bundle extras = getIntent().getExtras();
 
-        if (extras != null) {
-            getMenuInflater().inflate(R.menu.exibe_contato, menu);
-        } else {
-            getMenuInflater().inflate(R.menu.menu_main, menu);
+        if(extras !=null) {
+            int Value = extras.getInt("id");
+            if(Value>0){
+                getMenuInflater().inflate(R.menu.exibe_contato, menu);
+            } else{
+                getMenuInflater().inflate(R.menu.menu_main, menu);
+            }
         }
-
         return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        switch (item.getItemId()) {
+        switch(item.getItemId()) {
             case R.id.Edit_Contact:
-                Button b = findViewById(R.id.btnSalvar);
+                Button b = findViewById(R.id.button1);
                 b.setVisibility(View.VISIBLE);
                 name.setEnabled(true);
                 name.setFocusableInTouchMode(true);
@@ -121,15 +131,19 @@ public class ExibeContatosActivity extends AppCompatActivity {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(R.string.deleteContact)
-                        .setPositiveButton(R.string.yes, (dialog, id) -> {
-                            mydb.deleteContact(contato.get_id());
-                            Toast.makeText(getApplicationContext(), R.string.delete_ok,
-                                    Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            startActivity(intent);
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                mydb.deleteContact(id_To_Update);
+                                Toast.makeText(getApplicationContext(), R.string.delete_ok,
+                                        Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                                startActivity(intent);
+                            }
                         })
-                        .setNegativeButton(R.string.no, (dialog, id) -> {
-                            // User cancelled the dialog
+                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                            }
                         });
 
                 AlertDialog d = builder.create();
@@ -143,31 +157,34 @@ public class ExibeContatosActivity extends AppCompatActivity {
         }
     }
 
-    public void salvar() {
-        contato.set_nome(name.getText().toString());
-        contato.set_num_tel(phone.getText().toString());
-        contato.set_email(email.getText().toString());
-        contato.set_logradouro(street.getText().toString());
-        contato.set_cidade(place.getText().toString());
-        if (contato.get_id() > 0) {
+    public void run(View view) {
+        Bundle extras = getIntent().getExtras();
+        if(extras !=null) {
+            int Value = extras.getInt("id");
+            if(Value>0){
 
-            if (mydb.updateContact(contato)) {
-                Toast.makeText(getApplicationContext(), "Atualizado", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                if(mydb.updateContact(new Contato( id_To_Update,name.getText().toString(),
+                        phone.getText().toString(), email.getText().toString(),
+                        street.getText().toString(), place.getText().toString()))){
+                    Toast.makeText(getApplicationContext(), "Atualizado", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                    startActivity(intent);
+                } else{
+                    Toast.makeText(getApplicationContext(), "Não Atualizado", Toast.LENGTH_SHORT).show();
+                }
+            } else{
+                if(mydb.insertContact(new Contato(name.getText().toString(), phone.getText().toString(),
+                        email.getText().toString(), street.getText().toString(),
+                        place.getText().toString()))){
+                    Toast.makeText(getApplicationContext(), "done",
+                            Toast.LENGTH_SHORT).show();
+                } else{
+                    Toast.makeText(getApplicationContext(), "not done",
+                            Toast.LENGTH_SHORT).show();
+                }
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                 startActivity(intent);
-            } else {
-                Toast.makeText(getApplicationContext(), "Não Atualizado", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            if (mydb.insertContact(contato)) {
-                Toast.makeText(getApplicationContext(), "done",
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getApplicationContext(), "not done",
-                        Toast.LENGTH_SHORT).show();
-            }
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
         }
     }
 }

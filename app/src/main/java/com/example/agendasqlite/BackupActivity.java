@@ -4,6 +4,7 @@ import android.Manifest;
 
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.icu.util.LocaleData;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -17,15 +18,21 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 
 public class BackupActivity extends AppCompatActivity {
     private DatabaseHelper mydb ;
@@ -50,12 +57,12 @@ public class BackupActivity extends AppCompatActivity {
         SharedPreferences settings = getSharedPreferences(PREFERENCIAS_NAME , 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean(PREFERENCIAS_VALOR, usesExternalStorage);
-        editor.apply();
+        editor.commit();
     }
     private void recuperar()
     {
 
-        SharedPreferences settings = getSharedPreferences(PREFERENCIAS_NAME ,MODE_PRIVATE);
+        SharedPreferences settings = getSharedPreferences(PREFERENCIAS_NAME , 0);
         usesExternalStorage = settings.getBoolean(PREFERENCIAS_VALOR, false);
         switcher.setChecked(usesExternalStorage);
     }
@@ -66,20 +73,21 @@ public class BackupActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.backup_menu, menu);
         return true;
     }
-public void BackupInterno()
+public boolean BackupInterno()
 {
     try {
         ArrayList<Contato> c = mydb.getContactsList();
         File file =getFileStreamPath(BACKUP_CONTATOS);
         FileOutputStream fos = new FileOutputStream(file);
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        ObjectOutputStream oos = null;
+        oos = new ObjectOutputStream(fos);
         oos.writeObject(c);
         oos.close();
         fos.close();
-        Toast.makeText(this, file.getAbsolutePath(),Toast.LENGTH_SHORT).show();
+        return  true;
     } catch (IOException e) {
         e.printStackTrace();
-        Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        return false;
     }
 }
 public void BackupExterno()
@@ -110,18 +118,18 @@ File dir = Environment.getExternalStorageDirectory();
             if (!dir.exists()) {
                 dir.mkdirs();
             }
-            File subDir = new File (dir, String.valueOf(R.string.app_name));
+            File subDir = new File (dir, "appSqlite");
             if (!subDir.exists()) {
                 subDir.mkdirs();
             }
             String name= "backup_"+ LocalDateTime.now() + ".json";
-            File f = new File(subDir, name);
+            File arquivo = new File(subDir, name);
 
-            FileWriter fileWriter = new FileWriter(f);
+            FileWriter fileWriter = new FileWriter(arquivo);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             bufferedWriter.write(jLista.toString());
             bufferedWriter.close();
-            Toast.makeText(getApplicationContext(), f.getAbsolutePath(),
+            Toast.makeText(getApplicationContext(), arquivo.getAbsolutePath(),
                     Toast.LENGTH_SHORT).show();
 
         } catch (IOException e) {
@@ -132,40 +140,51 @@ File dir = Environment.getExternalStorageDirectory();
     }
     else {
 
-        Toast.makeText(getApplicationContext(), R.string.no_record_acces,
+        Toast.makeText(getApplicationContext(), "Sem acesso de Gravação",
                 Toast.LENGTH_SHORT).show();
 
     }
 }}
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
 
-        if (item.getItemId() == R.id.do_backup) {
-            if (usesExternalStorage) {
-                BackupExterno();
-            } else {
-                BackupInterno();
-            }
-            return true;
+        switch (item.getItemId()) {
+            case R.id.do_backup:
+
+              if(usesExternalStorage)
+              {
+BackupExterno();
+              }
+              else{
+BackupInterno();
+
+              }
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_PERMISSION) {// Permissão garantida
-            if (grantResults.length > 0
-                    && grantResults[0]
-                    == PackageManager.PERMISSION_GRANTED) {
-                BackupExterno();
-            } else {
-                Toast.makeText(this,
-                        R.string.perm_denied,
-                        Toast.LENGTH_SHORT).show();
-            }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_PERMISSION:
+                // Permissão garantida
+                if (grantResults.length > 0
+                        && grantResults[0]
+                        == PackageManager.PERMISSION_GRANTED) {
+                    BackupExterno();
+                } else {
+                    Toast.makeText(this,
+                            "Permissão negada",
+                            Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
 }
